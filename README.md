@@ -1,34 +1,51 @@
-# AIW Next.JS Starter Kit
+# Changes needed to be done in the React / Next js Apps in order to work into Browser Interop.io
 
-AIW Next.js Starter Kit
-This starter kit is designed to kickstart your project with AIW standards, including customizations such as the Tailwind CSS, AIW favicon, specific fonts, and a Zustand store setup.
+### Add new package
+```
+npm install @interopio/browser
+```
+### Update the InteropContextProvider.tsx file
 
-## Setting Up the Environment
+```jsx
+// We need to add few lines while creating Interop Provider in an Next/React App.
 
-### Node Version Management
+import Loader from '@/components/loader/Loader'
+import ioConnectDesktop from '@interopio/desktop'
+import { IOConnectProvider } from '@interopio/react-hooks'
+import IOWorkspaces from '@interopio/workspaces-api'
+import ioConnectBrowser from '@interopio/browser' // Add new package '@interopio/browser'
 
-To ensure compatibility, use NVM to switch to the project's specified Node.js version:
+interface Props {
+  children: React.ReactNode
+}
+
+const InteropContextProvider = ({ children }: Props) => {
+  return (
+    <IOConnectProvider
+      fallback={<Loader size={104} loadingText={''} isFullPageLoader={true} />}
+      settings={{
+        desktop: {
+          factory: ioConnectDesktop,
+          config: {
+            channels: true,
+            appManager: 'full',
+            layouts: 'full',
+            libraries: [IOWorkspaces],
+          },
+        },
+        // To Support Interop IO on Browser below config has to be added
+        browser: {
+          factory: ioConnectBrowser,
+          config: {
+            libraries: [IOWorkspaces],
+          },
+        },
+      }}
+    >
+      {children}
+    </IOConnectProvider>
+  )
+}
+export default InteropContextProvider
 
 ```
-nvm use
-```
-
-## Verifying Node.js Version
-
-### Confirm you're using the correct Node.js version:
-
-```
-node -v
-```
-
-## Getting Started
-
-Begin by launching the development server:
-
-```
-npm run dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
