@@ -1,0 +1,17 @@
+export const SPACING = {
+  spaceExtraSmall4: '2px',
+  spaceExtraSmall3: '4px',
+  spaceExtraSmall2: '8px',
+  spaceExtraSmall: '12px',
+  spaceSmall: '16px',
+  spaceMedium: '20px',
+  spaceLarge: '24px',
+  spaceExtraLarge: '32px',
+  spaceExtraLarge2: '40px',
+  spaceExtraLarge3: '48px',
+  spaceExtraLarge4: '56px',
+  spaceExtraLarge5: '64px',
+  spaceExtraLarge6: '72px',
+  spaceExtraLarge7: '80px',
+  spaceExtraLarge8: '88px',
+}

@@ -1,0 +1,77 @@
+# Deploy to Azure Kubernetes Service
+# Build and push image to Azure Container Registry; Deploy to Azure Kubernetes Service
+# https://docs.microsoft.com/azure/devops/pipelines/languages/docker
+#azure pipelines  yml file is used to deploy application to dev, pl1, uat
+
+trigger:
+  - none
+
+pr: none
+
+resources:
+  - repo: self
+
+variables:
+  # Container registry service connection established during pipeline creation
+  dockerRegistryServiceConnection: '41c6ae0c-0152-4548-a6db-ea9b4c3b12e7' # not to change, remains same for dev, uat, pl1
+# Application name to be added everywehere where you see aiw-nexstartkit. this will be your imagerepo name for deployment
+  imageRepository: 'aiw-nextstartkit'
+  containerRegistry: 'wedbushdevacr.azurecr.io'
+  dockerfilePath: '**/Dockerfile'
+  tag: '$(env)-$(Build.BuildId)'
+  imagePullSecret: 'wedbushdevacr20908da7-auth' #do not change this
+
+  # Agent VM image name
+  vmImageName: 'ubuntu-latest'
+
+stages:
+  - stage: Build
+    displayName: Build stage
+    jobs:
+      - job: Build
+        displayName: Build
+        pool:
+          vmImage: $(vmImageName)
+        steps:
+          - task: CmdLine@2
+            inputs:
+              script: |
+# Sample sed statements to replace app config variable values with the pipeline variable values from azure pipelie
+# sed -i 's#SECURITIES_ACCOUNT_APP_DOMAIN#$(SECURITIES_ACCOUNT_APP_DOMAIN)#ig' nginx.conf
+#cat statements are used to display the values replaced in pipeline
+# cat nginx.conf
+          - task: Docker@2
+            displayName: Build and push an image to container registry
+            inputs:
+              command: buildAndPush
+              repository: $(imageRepository)
+              dockerfile: $(dockerfilePath)
+              containerRegistry: $(dockerRegistryServiceConnection)
+              tags: |
+                $(tag)
+                latest
+#tag defined in azure pipelien as per env i.e. dev, uat, pl1, it picks up accordingly. for this you need to add env=dev as per env for each variable group in pipeleine              
+                
+          #Scanner
+          - task: CmdLine@2
+            displayName: Downloading SonarScanner
+            inputs:
+              script: |
+                curl $(sonarscannerurl) --output sonarscanner.zip
+          - task: ExtractFiles@1
+            displayName: Extracting SonarScanner
+            inputs:
+              archiveFilePatterns: '**/sonarscanner.zip'
+              destinationFolder: './sonarscanner'
+              cleanDestinationFolder: true
+              overwriteExistingFiles: true
+
+          - task: CmdLine@2
+            displayName: Scanning the Code with SonarQube
+            inputs:
+              script: |
+                $(sonarscannerpath)/sonar-scanner \
+                  -Dsonar.projectKey=$(Build.DefinitionName)_$(Build.SourceBranchName) \
+                  -Dsonar.sources=. \
+                  -Dsonar.host.url=$(sonarqubeurl) \
+                  -Dsonar.login=$(sonarqubetoken)

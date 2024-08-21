@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+#appname
+  name: aiw-nextstartkit
+  namespace: digitaltransformation
+spec:
+  type: ClusterIP
+  selector:
+    app: aiw-nextstartkit
+  ports:
+    - protocol: TCP
+    #port and target do not change
+      port: 81
+      targetPort: 81

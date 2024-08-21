@@ -1,0 +1,51 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: 'SourceSansPro';
+  src: url('/fonts/SourceSansPro-Regular.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'SourceSansPro';
+  src: url('/fonts/SourceSansPro-Bold.otf') format('opentype');
+  font-weight: 700;
+  font-style: normal;
+}
+
+* {
+  font-family: 'SourceSansPro', 'OpenSans', sans-serif;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  font-weight: 400;
+  color: #0f172a;
+  background: #f8fafc;
+}
+
+*::-webkit-scrollbar {
+  background: #f1f5f9;
+  width: 8px;
+  height: 8px;
+  border-radius: 8px;
+}
+
+*::-webkit-scrollbar-thumb {
+  height: 8px;
+  top: 8px;
+  border-radius: 8px;
+  background: #e2e8f0;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: rgba(167, 175, 188, 0.3);
+}
+
+*::-webkit-scrollbar-track {
+  border-radius: 8px;
+}
